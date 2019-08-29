@@ -90,8 +90,14 @@ class InstagramSpider(scrapy.Spider):
     def makePost(self, media):
         location = media['location']
         caption = ''
+        comments = 0
+        likes = 0
         if len(media['edge_media_to_caption']['edges']):
             caption = media['edge_media_to_caption']['edges'][0]['node']['text']
+        if len(media['edge_media_preview_comment']):
+            comments = media['edge_media_preview_comment']['count']
+        if len(media['edge_media_preview_like']):
+            likes = media['edge_media_preview_like']['count']
         return Post(id=media['id'],
                     shortcode=media['shortcode'],
                     caption=caption,
@@ -102,4 +108,7 @@ class InstagramSpider(scrapy.Spider):
                     loc_lon=location.get('lng',0),
                     owner_id =media['owner']['id'],
                     owner_name = media['owner']['username'],
-                    taken_at_timestamp= media['taken_at_timestamp'])
+                    taken_at_timestamp= media['taken_at_timestamp'],
+                    comments = comments,
+                    likes = likes
+                    )

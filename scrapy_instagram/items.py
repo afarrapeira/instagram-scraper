@@ -20,4 +20,6 @@ class Post(Item):
     owner_id = Field()
     owner_name = Field()
     taken_at_timestamp = Field()
+    comments = Field()
+    likes = Field()
     pass
