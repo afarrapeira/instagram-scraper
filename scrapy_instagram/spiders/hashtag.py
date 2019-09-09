@@ -90,6 +90,10 @@ class InstagramSpider(scrapy.Spider):
         except NameError:
             pass
             
+        hashtags = caption.split("#")
+        del hashtags[0]
+        for i in range(len(hashtags)):
+            hashtags[i] = "#" + hashtags[i].split(" ")[0]
         return Post(id=media['id'],
                     shortcode=media['shortcode'],
                     caption=caption,
@@ -100,5 +104,6 @@ class InstagramSpider(scrapy.Spider):
                     owner_name = media['owner']['username'],
                     taken_at_timestamp= media['taken_at_timestamp'],
                     comments= comment,
-                    likes= like
+                    likes= like,
+                    hashtags= hashtags
                     )

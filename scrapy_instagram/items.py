@@ -22,4 +22,5 @@ class Post(Item):
     taken_at_timestamp = Field()
     comments = Field()
     likes = Field()
+    hashtags = Field()
     pass
