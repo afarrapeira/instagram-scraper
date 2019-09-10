@@ -72,6 +72,10 @@ class InstagramSpider(scrapy.Spider):
         media = graphql['graphql']['shortcode_media']
         yield self.makePost(media)         
 
+    def get_hashtags(self, text, addHashtag=True, order=False):
+        tags = set([("#" if addHashtag else "") + item.strip("#.,-\"\'&*^!?") for item in text.split() if (item.startswith("#") and len(item) < 256 and len(item)>0)])
+        return sorted(tags) if order else tags
+
     def makePost(self, media):
         location = media['location']
         caption = ''
@@ -90,10 +94,7 @@ class InstagramSpider(scrapy.Spider):
         except NameError:
             pass
             
-        hashtags = caption.split("#")
-        del hashtags[0]
-        for i in range(len(hashtags)):
-            hashtags[i] = "#" + hashtags[i].split(" ")[0]
+        hashtags = self.get_hashtags(caption)
         return Post(id=media['id'],
                     shortcode=media['shortcode'],
                     caption=caption,
