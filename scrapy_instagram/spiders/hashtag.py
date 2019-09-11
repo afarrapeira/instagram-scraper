@@ -76,6 +76,13 @@ class InstagramSpider(scrapy.Spider):
         tags = set([("#" if addHashtag else "") + item.strip("#.,-\"\'&*^!?") for item in text.split() if (item.startswith("#") and len(item) < 256 and len(item)>0)])
         return sorted(tags) if order else tags
 
+    def get_mentions(self, text):
+        #First we split the caption in re.split.
+        #Items with "@" in them (but not as the last character) get split again using "@" as the separator, and we keep the second part of the split (the username).
+        #This way we can find mentions without a whitespace before them
+        mentions = set([item.split('@')[1] for item in re.split(';|,|\*|\n| |\\\\', text) if ("@" in item) and ( item.index("@")+1 < len(item) ) ])
+        return mentions
+        
     def makePost(self, media):
         location = media['location']
         caption = ''
@@ -95,6 +102,7 @@ class InstagramSpider(scrapy.Spider):
             pass
             
         hashtags = self.get_hashtags(caption)
+        mentions = self.get_mentions(caption)
         return Post(id=media['id'],
                     shortcode=media['shortcode'],
                     caption=caption,
@@ -106,5 +114,6 @@ class InstagramSpider(scrapy.Spider):
                     taken_at_timestamp= media['taken_at_timestamp'],
                     comments= comment,
                     likes= like,
-                    hashtags= hashtags
+                    hashtags= hashtags,
+                    mentions = mentions
                     )

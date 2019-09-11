@@ -23,4 +23,5 @@ class Post(Item):
     comments = Field()
     likes = Field()
     hashtags = Field()
+    mentions = Field()
     pass
